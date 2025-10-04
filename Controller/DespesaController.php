@@ -10,9 +10,9 @@ class DespesaController
     private $despesaModel;
     private $usuarioId;
 
-    public function __construct()
+    public function __construct(Despesa $despesaModel)
     {
-        $this->despesaModel = new Despesa();
+        $this->despesaModel = $despesaModel;
     }
 
     public function setUsuarioId(int $usuarioId): void
@@ -55,10 +55,10 @@ class DespesaController
             ];
         }
 
-        $descricao = filter_input(INPUT_POST, "descricao", FILTER_UNSAFE_RAW);
-        $valor = filter_input(INPUT_POST, "valor", FILTER_VALIDATE_FLOAT);
-        $categoria = filter_input(INPUT_POST, "categoria", FILTER_UNSAFE_RAW);
-        $data = filter_input(INPUT_POST, "data", FILTER_UNSAFE_RAW);
+        $descricao = $_POST['descricao'] ?? filter_input(INPUT_POST, "descricao", FILTER_UNSAFE_RAW);
+        $valor = $_POST['valor'] ?? filter_input(INPUT_POST, "valor", FILTER_VALIDATE_FLOAT);
+        $categoria = $_POST['categoria'] ?? filter_input(INPUT_POST, "categoria", FILTER_UNSAFE_RAW);
+        $data = $_POST['data'] ?? filter_input(INPUT_POST, "data", FILTER_UNSAFE_RAW);
 
         $validacao = $this->validarDadosDespesa($descricao, $valor, $categoria, $data);
         if (!$validacao["valido"]) {
@@ -82,96 +82,6 @@ class DespesaController
         }
     }
 
-    
-    public function buscar(int $id)
-    {
-        if (!isset($this->usuarioId)) {
-            return [
-                "success" => false,
-                "message" => "ID do usuário não definido para buscar despesa."
-            ];
-        }
-        $despesa = $this->despesaModel->buscarDespesa($id, $this->usuarioId);
-
-        if ($despesa) {
-            return [
-                "success" => true,
-                "data" => $despesa
-            ];
-        } else {
-            return [
-                "success" => false,
-                "message" => "Despesa não encontrada"
-            ];
-        }
-    }
-
-    
-    public function atualizar(int $id): array
-    {
-        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-            return [
-                "success" => false,
-                "message" => "Método não permitido"
-            ];
-        }
-
-        if (!isset($this->usuarioId)) {
-            return [
-                "success" => false,
-                "message" => "ID do usuário não definido para atualizar despesa."
-            ];
-        }
-
-        $descricao = filter_input(INPUT_POST, "descricao", FILTER_UNSAFE_RAW);
-        $valor = filter_input(INPUT_POST, "valor", FILTER_VALIDATE_FLOAT);
-        $categoria = filter_input(INPUT_POST, "categoria", FILTER_UNSAFE_RAW);
-        $data = filter_input(INPUT_POST, "data", FILTER_UNSAFE_RAW);
-
-        $validacao = $this->validarDadosDespesa($descricao, $valor, $categoria, $data);
-        if (!$validacao["valido"]) {
-            return [
-                "success" => false,
-                "message" => $validacao["mensagem"]
-            ];
-        }
-
-        if ($this->despesaModel->atualizarDespesa($id, $this->usuarioId, $descricao, $valor, $categoria, $data)) {
-            return [
-                "success" => true,
-                "message" => "Despesa atualizada com sucesso",
-                "redirect" => "listar-despesas.php"
-            ];
-        } else {
-            return [
-                "success" => false,
-                "message" => "Erro ao atualizar despesa. Tente novamente."
-            ];
-        }
-    }
-
-    
-    public function excluir(int $id): array
-    {
-        if (!isset($this->usuarioId)) {
-            return [
-                "success" => false,
-                "message" => "ID do usuário não definido para excluir despesa."
-            ];
-        }
-
-        if ($this->despesaModel->excluirDespesa($id, $this->usuarioId)) {
-            return [
-                "success" => true,
-                "message" => "Despesa excluída com sucesso"
-            ];
-        } else {
-            return [
-                "success" => false,
-                "message" => "Erro ao excluir despesa. Tente novamente."
-            ];
-        }
-    }
 
     public function relatorio(): array
     {

@@ -8,8 +8,8 @@ use Exception;
 class UserController {
     private $userModel;
 
-    public function __construct() {
-        $this->userModel = new User();
+    public function __construct(User $userModel) {
+        $this->userModel = $userModel;
     }
 
     public function createUser($name, $email, $password) {
@@ -28,6 +28,9 @@ class UserController {
         $user = $this->userModel->getUserByEmail($email);
 
         if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['usuario_id'] = $user['id'];
+            $_SESSION['user_fullname'] = $user['user_fullname'];
+            $_SESSION['email'] = $user['email'];
             return $user; // Retorne o array do usuário
         }
         return false;

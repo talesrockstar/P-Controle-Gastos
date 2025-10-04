@@ -5,14 +5,17 @@ require_once __DIR__ .
 '/../Config/configuration.php';
 require_once __DIR__ . 
 '/../Controller/DespesaController.php';
+require_once __DIR__ . '/../Model/Despesa.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+use Model\Despesa;
 use Controller\DespesaController;
 
-$despesaController = new DespesaController();
+$despesaModel = new Despesa();
+$despesaController = new DespesaController($despesaModel);
 
 $usuarioId = $_SESSION['usuario_id'] ?? 1;
 $usuarioNome = $_SESSION['usuario_nome'] ?? 'Usuário Teste';

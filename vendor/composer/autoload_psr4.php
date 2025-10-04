@@ -7,6 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Tales\\PControleGastos\\' => array($baseDir . '/P-Controle-Gastos'),
+    'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
     'Model\\' => array($baseDir . '/Model'),
+    'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
     'Controller\\' => array($baseDir . '/Controller'),
 );

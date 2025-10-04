@@ -1,10 +1,14 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-
 require_once __DIR__ . '/../Config/configuration.php';
 require_once __DIR__ . '/../Controller/DespesaController.php';
+require_once __DIR__ . '/../Model/Despesa.php';
 
-$despesaController = new \Controller\DespesaController();
+use Model\Despesa;
+use Controller\DespesaController;
+
+$despesaModel = new Despesa();
+$despesaController = new DespesaController($despesaModel);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
