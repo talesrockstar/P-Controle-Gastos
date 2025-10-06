@@ -1,9 +1,11 @@
 <?php
 require_once '../vendor/autoload.php';
 
+use Model\User;
 use Controller\UserController;
 
-$userController = new UserController();
+$userModel = new User();
+$userController = new UserController($userModel);
 
 $registerUserMessage = '';
 

@@ -3,7 +3,6 @@
 use PHPUnit\Framework\TestCase;
 
 use Controller\DespesaController;
-
 use Model\Despesa;
 
 class DespesaTest extends TestCase {
@@ -18,15 +17,15 @@ class DespesaTest extends TestCase {
     }
 
     public function testListar() {
-        $this->despesaController->setUsuarioId(4);
+        $this->despesaController->setUsuarioId(1);
         $this->mockDespesaModel->method('listarDespesasUsuario')->willReturn([[
             'id'=>1,
             'descricao'=>'Teste'
         ]]);
         $_GET['pagina'] = 1;
-            $result = $this->despesaController->listar();
-            $this->assertTrue($result['success']);
-            $this->assertIsArray($result['data']);
+            $despesaResult = $this->despesaController->listar();
+            $this->assertTrue($despesaResult['success']);
+            $this->assertIsArray($despesaResult['data']);
     }
 
     public function testCriarComSucesso() {
@@ -39,8 +38,81 @@ class DespesaTest extends TestCase {
         $this->despesaController->setUsuarioId(1);
         $this->mockDespesaModel->method('criarDespesa')->willReturn(true);
 
-        $result = $this->despesaController->criar();
-        $this->assertTrue($result['success']);
+        $despesaResult = $this->despesaController->criar();
+        $this->assertTrue($despesaResult['success']);
+        $this->assertEquals("Despesa criada com sucesso", $despesaResult['message']);
+    }
+
+    
+    public function testCriarDespesaSemDescricao() {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['descricao'] = ''; // Campo obrigatório vazio!
+        $_POST['valor'] = 100; 
+        $_POST['categoria'] = 'alimentacao';
+        $_POST['data'] = '2024-10-01';
+
+        $this->despesaController->setUsuarioId(1);
+
+        $despesaResult = $this->despesaController->criar();
+        $this->assertFalse($despesaResult['success']);
+        $this->assertEquals("Descrição deve ter pelo menos 3 caracteres", $despesaResult['message']);
+    }
+
+
+    public function testCriarDespesaSemValor() {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['descricao'] = 'Despesa Teste';
+        $_POST['valor'] = null; // Campo obrigatório vazio!
+        $_POST['categoria'] = 'alimentacao';
+        $_POST['data'] = '2024-10-01';
+
+        $this->despesaController->setUsuarioId(1);
+
+        $despesaResult = $this->despesaController->criar();
+        $this->assertFalse($despesaResult['success']);
+        $this->assertEquals("Valor deve ser informado", $despesaResult['message']);
+    }
+
+    // public function testCriarDespesaSemValor() {
+    //     $_SERVER['REQUEST_METHOD'] = 'POST';
+    //     $_POST['descricao'] = 'Despesa Teste';
+    //     $_POST['valor'] = null;   // Campo obrigatório vazio!
+    //     $_POST['categoria'] = 'alimentacao';
+    //     $_POST['data'] = '2024-10-01';
+
+    //     $this->despesaController->setUsuarioId(1);
+
+    //     $despesaResult = $this->despesaController->criar();
+    //     $this->assertFalse($despesaResult['success']);
+    //     $this->assertEquals("Todos os campos são obrigatórios", $despesaResult['message']);
+    // }
+
+    public function testCriarDespesaSemCategoria() {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['descricao'] = 'Despesa Teste';
+        $_POST['valor'] = 100;   
+        $_POST['categoria'] = ''; // Campo obrigatório vazio!
+        $_POST['data'] = '2024-10-01';
+
+        $this->despesaController->setUsuarioId(1);
+
+        $despesaResult = $this->despesaController->criar();
+        $this->assertFalse($despesaResult['success']);
+        $this->assertEquals("A categoria deve ser informada", $despesaResult['message']);
+    }
+
+    public function testCriarDespesaSemData() {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['descricao'] = 'Despesa Teste';
+        $_POST['valor'] = 100; 
+        $_POST['categoria'] = 'alimentacao';
+        $_POST['data'] = ''; // Campo obrigatório vazio!
+
+        $this->despesaController->setUsuarioId(1);
+
+        $despesaResult = $this->despesaController->criar();
+        $this->assertFalse($despesaResult['success']);
+        $this->assertEquals("Data inválida", $despesaResult['message']);
     }
 
     public function testCriarSemUsuarioId() {
@@ -50,8 +122,9 @@ class DespesaTest extends TestCase {
         $_POST['categoria'] = 'alimentacao';
         $_POST['data'] = '2024-10-01';
 
-        $result = $this->despesaController->criar();
-        $this->assertFalse($result['success']);
+        $despesaResult = $this->despesaController->criar();
+        $this->assertFalse($despesaResult['success']);
+        $this->assertEquals("ID do usuário não definido para criação de despesa.", $despesaResult['message']);
     }
 
     public function testRelatorioComSucesso() {
@@ -62,9 +135,9 @@ class DespesaTest extends TestCase {
         $_GET['data_inicio'] = '2024-10-01';
         $_GET['data_fim'] = '2024-10-31';
 
-        $result = $this->despesaController->relatorio();
-        $this->assertTrue($result['success']);
-        $this->assertArrayHasKey('data', $result);
+        $despesaResult = $this->despesaController->relatorio();
+        $this->assertTrue($despesaResult['success']);
+        $this->assertArrayHasKey('data', $despesaResult);
     }
 
     public function testGetCategorias() {

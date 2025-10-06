@@ -119,42 +119,28 @@ class DespesaController
     }
 
     
-    private function validarDadosDespesa(string $descricao, float $valor, string $categoria, string $data): array
-    {
-        if (empty($descricao) || $valor === false || empty($categoria) || empty($data)) {
-            return [
-                "valido" => false,
-                "mensagem" => "Todos os campos são obrigatórios"
-            ];
+   private function validarDadosDespesa(string $descricao, float|null $valor, string $categoria, string $data): array {
+        if (empty($descricao)) {
+            return ["valido" => false, "mensagem" => "Descrição deve ter pelo menos 3 caracteres"];
         }
 
-        if (strlen($descricao) < 3) {
-            return [
-                "valido" => false,
-                "mensagem" => "Descrição deve ter pelo menos 3 caracteres"
-            ];
+        if ($valor === null || $valor === false) {
+            return ["valido" => false, "mensagem" => "Valor deve ser informado"];
         }
 
         if ($valor <= 0) {
-            return [
-                "valido" => false,
-                "mensagem" => "Valor deve ser maior que zero"
-            ];
+            return ["valido" => false, "mensagem" => "Valor deve ser maior que zero"];
         }
 
-        if (!$this->validarData($data)) {
-            return [
-                "valido" => false,
-                "mensagem" => "Data inválida"
-            ];
+        if (empty($categoria)) {
+            return ["valido" => false, "mensagem" => "A categoria deve ser informada"];
         }
 
-        return [
-            "valido" => true,
-            "mensagem" => ""
-        ];
-    }
-
+        if (empty($data)) {
+            return ["valido" => false, "mensagem" => "Data inválida"];
+        }
+        return ["valido" => true];
+}
    
     private function validarData(string $data): bool
     {

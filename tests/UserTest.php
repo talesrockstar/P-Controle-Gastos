@@ -31,7 +31,7 @@ class UserTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_be_able_to_sign_in() {
         $this->mockUserModel->method('getUserByEmail')->willReturn([
-            "id"=> 4,
+            "id"=> 1,
             "user_fullname" => "Maria",
             "email"=> "maria@email.com",
             "password"=> password_hash("123456", PASSWORD_DEFAULT)
@@ -40,7 +40,7 @@ class UserTest extends TestCase
 
         $this->assertNotFalse($userResult);
 
-        $this->assertEquals(4, $_SESSION['usuario_id']);
+        $this->assertEquals(1, $_SESSION['usuario_id']);
         $this->assertEquals('Maria', $_SESSION['user_fullname']);
         $this->assertEquals('maria@email.com', $_SESSION['email']);
     }
@@ -48,7 +48,7 @@ class UserTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_shouldnt_login_with_invalid_credentials() {
         $this->mockUserModel->method('getUserByEmail')->willReturn([
-            "id"=> 4,
+            "id"=> 1,
             "user_fullname" => "Maria",
             "email"=> "maria@email.com",
             "password"=> password_hash("123456", PASSWORD_DEFAULT)
@@ -61,7 +61,7 @@ class UserTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_be_able_to_check_user_by_email() {
         $this->mockUserModel->method('getUserByEmail')->willReturn([
-            "id"=> 4,
+            "id"=> 1,
             "user_fullname" => "Maria",
             "email"=> "maria@email.com",
             "password"=> '$2y$10$JFcVAE4zupbqoKZfqRpusOf82HkL/R4yeE.9QXCGGb5'
@@ -77,7 +77,7 @@ class UserTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_verify_if_is_logged_in()
     {
-        $_SESSION['usuario_id'] = 4;
+        $_SESSION['usuario_id'] = 1;
 
         $userResult = $this->userController->isLoggedIn();
 
