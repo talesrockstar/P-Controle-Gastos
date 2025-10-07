@@ -16,7 +16,7 @@ class DespesaTest extends TestCase {
         $this->despesaController = new DespesaController($this->mockDespesaModel);
     }
 
-    public function testListar() {
+    public function testListarDespesa() {
         $this->despesaController->setUsuarioId(1);
         $this->mockDespesaModel->method('listarDespesasUsuario')->willReturn([[
             'id'=>1,
@@ -28,7 +28,7 @@ class DespesaTest extends TestCase {
             $this->assertIsArray($despesaResult['data']);
     }
 
-    public function testCriarComSucesso() {
+    public function testCriarDespesaComSucesso() {
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST['descricao'] = 'Despesa Teste';
         $_POST['valor'] = 100;
@@ -138,6 +138,18 @@ class DespesaTest extends TestCase {
         $despesaResult = $this->despesaController->relatorio();
         $this->assertTrue($despesaResult['success']);
         $this->assertArrayHasKey('data', $despesaResult);
+    }
+
+    
+    public function testListarDespesaSemGastos() {
+        $this->despesaController->setUsuarioId(1);
+        $this->mockDespesaModel->method('listarDespesasUsuario')->willReturn([]); // Nenhum gasto
+
+        $_GET['pagina'] = 1;
+        $despesaResult = $this->despesaController->listar();
+
+        $this->assertFalse($despesaResult['success']);
+        $this->assertEquals("Nenhum gasto cadastrado", $despesaResult['message']);
     }
 
     public function testGetCategorias() {

@@ -28,6 +28,16 @@ class UserTest extends TestCase
 
     }
 
+      #[\PHPUnit\Framework\Attributes\Test]
+    public function it_should_not_create_user_with_invalid_credentials() {
+        $this->mockUserModel->method('registerUser')->willReturn(false);
+
+        $userResult = $this->userController->createUser('', 'email_invalido', ''); // Dados inválidos
+
+         $this->assertFalse($userResult);
+
+    }
+
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_be_able_to_sign_in() {
         $this->mockUserModel->method('getUserByEmail')->willReturn([

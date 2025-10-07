@@ -30,6 +30,12 @@ class DespesaController
 
         $despesas = $this->despesaModel->listarDespesasUsuario($this->usuarioId, $limite, $offset);
 
+        if (empty($despesas)) {
+            return [
+                "success" => false,
+                "message" => "Nenhum gasto cadastrado"
+            ];
+        }
         return [
             "success" => true,
             "data" => $despesas,
